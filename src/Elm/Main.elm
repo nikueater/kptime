@@ -8,6 +8,7 @@ import Element.Font as Font
 import Element.Input exposing (labelHidden, multiline)
 import GKPTModel exposing (..)
 import GKPTParser as Parser
+import Html.Attributes exposing (style)
 
 
 default : String
@@ -89,6 +90,7 @@ view model =
             (row [ width fill, height fill ]
                 [ column
                     [ width (fillPortion 2)
+                    , clip
                     , height fill
                     , spacing 0
                     , Bg.color (rgb255 51 51 51)
@@ -129,7 +131,7 @@ view model =
                     , el
                         [ height fill
                         , width fill
-                        , clipY
+                        , clip
                         , scrollbarY
                         ]
                         (multiline
@@ -242,17 +244,24 @@ node (Node n) =
         , Border.rounded 3
         , clip
         , alignBottom
+        , height shrink
         , Font.family [ Font.typeface "Fira Code" ]
         ]
         [ relation
         , paragraph
             [ padding 6
             , width fill
-            , height (minimum 48 shrink)
+            , clipX
+            , height fill
             , Font.size 16
             , Font.color (rgb255 255 255 255)
+            , htmlAttribute (style "white-space" "normal")
+            , htmlAttribute (style "word-wrap" "break-word")
             ]
-            [ text n.text ]
+            [ el
+                []
+                (text n.text)
+            ]
         ]
 
 
