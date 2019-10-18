@@ -1,3 +1,13 @@
 # Kptime
+This is a simple retrospective tool.  
+You can visualize GKPT with markdown-like text.  
+demo: https://kptime.netlify.com/
 
-a simple retrospecting tool
+## usage
+
+to use the tool locally...
+```zh
+% npm install
+% make
+```
+
