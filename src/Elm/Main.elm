@@ -69,7 +69,7 @@ parse : String -> Model -> Model
 parse code model =
     case Parser.parse code of
         Ok segs ->
-            { model | code = code, segments = Debug.log "segs" segs, error = "" }
+            { model | code = code, segments = segs, error = "" }
 
         Err e ->
             { model | code = code, error = e }
