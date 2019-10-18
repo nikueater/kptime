@@ -1,0 +1,15 @@
+html, body {
+    width: 100%;
+    min-height: 100%;
+    font-family: 'Fira Code', monospace, sans-serif;
+    background-color: #212121;
+}
+
+*:focus {
+    outline: none !important;
+    border: none;
+    outline-color: transparent;
+    outline-style: none;
+    box-shadow: none !important;
+}
+

@@ -1,0 +1,23 @@
+{
+  "name": "kpt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "nikueater <nikueater@outlook.com> (https://github.com/nikueater)",
+  "license": "ISC",
+  "devDependencies": {
+    "elm-hot": "^1.1.2",
+    "node-elm-compiler": "^5.0.4",
+    "parcel": "^1.12.4"
+  },
+  "dependencies": {
+    "src": "^1.1.2"
+  }
+}
