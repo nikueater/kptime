@@ -29,6 +29,36 @@ default =
 """
 
 
+white : Color
+white =
+    rgb255 255 255 255
+
+
+darkGrey : Color
+darkGrey =
+    rgb255 33 33 33
+
+
+grey : Color
+grey =
+    rgb255 51 51 51
+
+
+lightGrey : Color
+lightGrey =
+    rgb255 128 128 128
+
+
+orange : Color
+orange =
+    rgb255 178 80 0
+
+
+blue : Color
+blue =
+    rgb255 33 150 243
+
+
 type alias Model =
     { segments : List Segment
     , code : String
@@ -84,73 +114,34 @@ view model =
             [ width fill
             , height fill
             , clipY
-            , Bg.color (rgb255 33 33 33)
+            , Bg.color darkGrey
             , inFront github
             ]
             (row [ width fill, height fill ]
-                [ column
+                [ el
                     [ width (fillPortion 2)
-                    , clip
                     , height fill
                     , spacing 0
-                    , Bg.color (rgb255 51 51 51)
+                    , clip
+                    , scrollbarY
+                    , Bg.color grey
                     ]
-                    [ row
-                        [ width fill
-                        , Font.color (rgb255 128 128 128)
-                        , paddingEach
-                            { top = 4
-                            , left = 4
-                            , right = 4
-                            , bottom = 0
-                            }
-                        ]
-                        [ el
-                            [ Font.size 64
-                            , Font.extraBold
-                            , alignBottom
-                            ]
-                            (text "K")
-                        , el
-                            [ Font.size 48
-                            , Font.heavy
-                            , alignBottom
-                            , paddingXY 0 2
-                            ]
-                            (text "PTIME")
-                        ]
-                    , el
-                        [ paddingXY 8 0
-                        , Font.color (rgb255 51 51 51)
-                        , Font.heavy
-                        , Font.size 18
-                        , width fill
-                        , Bg.color (rgb255 128 128 128)
-                        ]
-                        (text "for retrospectives")
-                    , el
+                    (multiline
                         [ height fill
-                        , width fill
-                        , clip
-                        , scrollbarY
+                        , Bg.color grey
+                        , Border.width 0
+                        , Font.color white
+                        , Font.size 16
+                        , Font.family [ Font.typeface "Fira Code" ]
+                        , Element.focused [ Border.glow (Element.rgba 0 0 0 0) 2 ]
                         ]
-                        (multiline
-                            [ Bg.color (rgb255 51 51 51)
-                            , Border.width 0
-                            , Font.color (rgb255 255 255 255)
-                            , Font.size 16
-                            , Font.family [ Font.typeface "Fira Code" ]
-                            , Element.focused [ Border.glow (Element.rgba 0 0 0 0) 2 ]
-                            , height fill
-                            ]
-                            { onChange = OnEdit
-                            , text = model.code
-                            , placeholder = Nothing
-                            , label = labelHidden "code"
-                            , spellcheck = False
-                            }
-                        )
-                    ]
+                        { onChange = OnEdit
+                        , text = model.code
+                        , placeholder = Nothing
+                        , label = labelHidden "code"
+                        , spellcheck = False
+                        }
+                    )
                 , column
                     [ width (fillPortion 7)
                     , height fill
@@ -192,7 +183,7 @@ segment (Segment name nodes) =
         , spacing 4
         ]
         [ wrappedRow
-            [ Font.color (rgb255 255 255 255)
+            [ Font.color white
             , Font.bold
             , width fill
             , spacing 2
@@ -233,14 +224,14 @@ node (Node n) =
                         , Font.size 14
                         , Font.heavy
                         , paddingXY 4 2
-                        , Font.color (rgb255 51 51 51)
-                        , Bg.color (rgb255 178 80 0)
+                        , Font.color grey
+                        , Bg.color orange
                         ]
                         (text r)
     in
     column
         [ width fill
-        , Bg.color (rgb255 51 51 51)
+        , Bg.color grey
         , Border.rounded 3
         , clip
         , alignBottom
@@ -251,10 +242,10 @@ node (Node n) =
         , paragraph
             [ padding 6
             , width fill
-            , clipX
             , height fill
+            , clipX
             , Font.size 16
-            , Font.color (rgb255 255 255 255)
+            , Font.color white
             , htmlAttribute (style "white-space" "normal")
             , htmlAttribute (style "word-wrap" "break-word")
             ]
@@ -274,7 +265,7 @@ errorMessage msg =
         _ ->
             el
                 [ width fill
-                , Bg.color (rgb255 180 0 0)
+                , Bg.color orange
                 ]
                 (text msg)
 
