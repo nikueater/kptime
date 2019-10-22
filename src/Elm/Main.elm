@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Colors
 import Element exposing (..)
 import Element.Background as Bg
 import Element.Border as Border
@@ -27,36 +28,6 @@ default =
 - what you will do
 - for instance, jogging [1]
 """
-
-
-white : Color
-white =
-    rgb255 255 255 255
-
-
-darkGrey : Color
-darkGrey =
-    rgb255 33 33 33
-
-
-grey : Color
-grey =
-    rgb255 51 51 51
-
-
-lightGrey : Color
-lightGrey =
-    rgb255 128 128 128
-
-
-orange : Color
-orange =
-    rgb255 178 80 0
-
-
-blue : Color
-blue =
-    rgb255 33 150 243
 
 
 type alias Model =
@@ -114,7 +85,7 @@ view model =
             [ width fill
             , height fill
             , clipY
-            , Bg.color darkGrey
+            , Bg.color Colors.white
             , inFront github
             ]
             (row [ width fill, height fill ]
@@ -124,13 +95,13 @@ view model =
                     , spacing 0
                     , clip
                     , scrollbarY
-                    , Bg.color grey
+                    , Bg.color Colors.lightGrey
                     ]
                     (multiline
                         [ height fill
-                        , Bg.color grey
+                        , Bg.color Colors.lightGrey
                         , Border.width 0
-                        , Font.color white
+                        , Font.color Colors.darkGrey
                         , Font.size 16
                         , Font.family [ Font.typeface "Fira Code" ]
                         , Element.focused [ Border.glow (Element.rgba 0 0 0 0) 2 ]
@@ -177,27 +148,47 @@ segments ss =
 
 segment : Segment -> Element Msg
 segment (Segment name nodes) =
+    let
+        color =
+            Colors.colorOf name
+    in
     column
         [ width (minimum 240 fill)
         , height fill
         , spacing 4
         ]
         [ wrappedRow
-            [ Font.color white
+            [ Font.color Colors.white
             , Font.bold
             , width fill
             , spacing 2
             ]
             [ el
                 [ Font.size 24
+                , Font.color color
                 ]
                 (paragraph [ width shrink ] [ text name ])
             , el
                 [ Font.size 16
+                , Font.color Colors.darkGrey
                 , alignBottom
                 , width fill
                 ]
-                (text <| String.fromInt (List.length nodes))
+                (el
+                    [ width (px 24)
+                    , height (px 24)
+                    , Bg.color color
+                    , Border.rounded 12
+                    , alignBottom
+                    ]
+                    (el
+                        [ centerX
+                        , centerY
+                        , Font.color Colors.white
+                        ]
+                        (text <| String.fromInt (List.length nodes))
+                    )
+                )
             ]
         , column
             [ spacing 6
@@ -205,12 +196,12 @@ segment (Segment name nodes) =
             , height fill
             , scrollbarY
             ]
-            (List.map node (List.reverse nodes))
+            (List.map (node color) (List.reverse nodes))
         ]
 
 
-node : Node -> Element Msg
-node (Node n) =
+node : Color -> Node -> Element Msg
+node color (Node n) =
     let
         relation =
             case n.relation of
@@ -223,15 +214,24 @@ node (Node n) =
                         , height shrink
                         , Font.size 14
                         , Font.heavy
-                        , paddingXY 4 2
-                        , Font.color grey
-                        , Bg.color orange
+                        , padding 5
+                        , Font.center
+                        , Font.color Colors.white
+                        , Bg.color Colors.translucentBlack
+                        , Border.dashed
+                        , Border.color Colors.translucentWhite
+                        , Border.widthEach
+                            { top = 0
+                            , left = 0
+                            , right = 0
+                            , bottom = 1
+                            }
                         ]
                         (text r)
     in
     column
         [ width fill
-        , Bg.color grey
+        , Bg.color color
         , Border.rounded 3
         , clip
         , alignBottom
@@ -245,7 +245,7 @@ node (Node n) =
             , height fill
             , clipX
             , Font.size 16
-            , Font.color white
+            , Font.color Colors.white
             , htmlAttribute (style "white-space" "normal")
             , htmlAttribute (style "word-wrap" "break-word")
             ]
@@ -265,9 +265,11 @@ errorMessage msg =
         _ ->
             el
                 [ width fill
-                , Bg.color orange
+                , height fill
+                , padding 10
+                , Bg.color Colors.orange
                 ]
-                (text msg)
+                (el [ centerX, centerY ] (text msg))
 
 
 github : Element Msg
