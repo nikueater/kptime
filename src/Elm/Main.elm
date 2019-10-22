@@ -5,6 +5,7 @@ import Colors
 import Element exposing (..)
 import Element.Background as Bg
 import Element.Border as Border
+import Element.Events as Events
 import Element.Font as Font
 import Element.Input exposing (labelHidden, multiline)
 import GKPTModel exposing (..)
@@ -34,11 +35,14 @@ type alias Model =
     { segments : List Segment
     , code : String
     , error : String
+    , relation : Relation
     }
 
 
 type Msg
     = OnEdit String
+    | OnEnterNode Relation
+    | OnLeaveNode Relation
 
 
 initialModel : Model
@@ -47,6 +51,7 @@ initialModel =
         { segments = []
         , code = ""
         , error = ""
+        , relation = None
         }
 
 
@@ -65,6 +70,16 @@ update msg model =
     case msg of
         OnEdit code ->
             ( parse code model, Cmd.none )
+
+        OnEnterNode rel ->
+            ( { model | relation = rel }, Cmd.none )
+
+        OnLeaveNode rel ->
+            if model.relation == rel then
+                ( { model | relation = None }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
 
 
 parse : String -> Model -> Model
@@ -136,7 +151,7 @@ view model =
                         , clip
                         , scrollbarX
                         ]
-                        [ segments model.segments
+                        [ segments model.relation model.segments
                         , errorMessage model.error
                         ]
                     ]
@@ -146,8 +161,8 @@ view model =
     }
 
 
-segments : List Segment -> Element Msg
-segments ss =
+segments : Relation -> List Segment -> Element Msg
+segments relation ss =
     row
         [ spacing 8
         , height fill
@@ -157,11 +172,11 @@ segments ss =
         , scrollbarY
         ]
     <|
-        List.map segment ss
+        List.map (segment relation) ss
 
 
-segment : Segment -> Element Msg
-segment (Segment name nodes) =
+segment : Relation -> Segment -> Element Msg
+segment relation (Segment name nodes) =
     let
         color =
             Colors.colorOf name
@@ -210,12 +225,12 @@ segment (Segment name nodes) =
             , height fill
             , scrollbarY
             ]
-            (List.map (node color) (List.reverse nodes))
+            (List.map (node relation color) (List.reverse nodes))
         ]
 
 
-node : Color -> Node -> Element Msg
-node color (Node n) =
+node : Relation -> Color -> Node -> Element Msg
+node highlight color (Node n) =
     let
         relation =
             case n.relation of
@@ -242,16 +257,36 @@ node color (Node n) =
                             }
                         ]
                         (text r)
+
+        events =
+            case n.relation of
+                None ->
+                    []
+
+                r ->
+                    [ Events.onMouseEnter (OnEnterNode r)
+                    , Events.onMouseLeave (OnLeaveNode r)
+                    ]
+
+        opacity =
+            if highlight /= None && highlight /= n.relation then
+                0.25
+
+            else
+                1.0
     in
     column
-        [ width fill
-        , Bg.color color
-        , Border.rounded 3
-        , clip
-        , alignBottom
-        , height shrink
-        , Font.family [ Font.typeface "Fira Code" ]
-        ]
+        ([ width fill
+         , Bg.color color
+         , Border.rounded 3
+         , clip
+         , alignBottom
+         , height shrink
+         , Font.family [ Font.typeface "Fira Code" ]
+         , alpha opacity
+         ]
+            ++ events
+        )
         [ relation
         , paragraph
             [ padding 6
@@ -274,7 +309,8 @@ errorMessage : String -> Element Msg
 errorMessage msg =
     case msg of
         "" ->
-            none
+            el [ height (px 24) ]
+                none
 
         _ ->
             el
