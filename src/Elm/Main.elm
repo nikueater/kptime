@@ -88,43 +88,56 @@ view model =
             , Bg.color Colors.white
             , inFront github
             ]
-            (row [ width fill, height fill ]
+            (column
+                [ width fill
+                , height fill
+                ]
                 [ el
-                    [ width (fillPortion 2)
+                    [ width fill
+                    , Bg.color Colors.blue
+                    , Font.color Colors.white
+                    , Font.heavy
+                    , Font.size 24
+                    , padding 8
+                    ]
+                    (text "kptime")
+                , row
+                    [ width fill
                     , height fill
-                    , spacing 0
                     , clip
-                    , scrollbarY
-                    , Bg.color Colors.lightGrey
                     ]
-                    (multiline
-                        [ height fill
+                    [ el
+                        [ width (fillPortion 2)
+                        , height fill
+                        , spacing 0
+                        , clip
+                        , scrollbarY
                         , Bg.color Colors.lightGrey
-                        , Border.width 0
-                        , Font.color Colors.darkGrey
-                        , Font.size 16
-                        , Font.family [ Font.typeface "Fira Code" ]
-                        , Element.focused [ Border.glow (Element.rgba 0 0 0 0) 2 ]
                         ]
-                        { onChange = OnEdit
-                        , text = model.code
-                        , placeholder = Nothing
-                        , label = labelHidden "code"
-                        , spellcheck = False
-                        }
-                    )
-                , column
-                    [ width (fillPortion 7)
-                    , height fill
-                    , clipX
-                    , scrollbarX
-                    ]
-                    [ segments model.segments
+                        (multiline
+                            [ height fill
+                            , Bg.color Colors.lightGrey
+                            , Border.width 0
+                            , Font.color Colors.darkGrey
+                            , Font.size 16
+                            , Font.family [ Font.typeface "Fira Code" ]
+                            , Element.focused [ Border.glow (Element.rgba 0 0 0 0) 2 ]
+                            ]
+                            { onChange = OnEdit
+                            , text = model.code
+                            , placeholder = Nothing
+                            , label = labelHidden "code"
+                            , spellcheck = False
+                            }
+                        )
                     , column
-                        [ width fill
-                        , height (px 48)
+                        [ width (fillPortion 7)
+                        , height fill
+                        , clip
+                        , scrollbarX
                         ]
-                        [ errorMessage model.error
+                        [ segments model.segments
+                        , errorMessage model.error
                         ]
                     ]
                 ]
@@ -141,6 +154,7 @@ segments ss =
         , width fill
         , paddingXY 8 4
         , clipY
+        , scrollbarY
         ]
     <|
         List.map segment ss
@@ -265,9 +279,11 @@ errorMessage msg =
         _ ->
             el
                 [ width fill
-                , height fill
-                , padding 10
-                , Bg.color Colors.orange
+                , height (px 24)
+                , centerY
+                , Font.size 16
+                , Font.heavy
+                , Font.color Colors.orange
                 ]
                 (el [ centerX, centerY ] (text msg))
 
